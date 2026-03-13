@@ -1,26 +1,25 @@
 import React, { useState } from "react";
 import { Text, View, Button, TextInput } from "react-native";
-import Calculator from "./calculator";
-
 import Clicker from "./clicker";
-
+import Calculator from "./calculator";
+import WeatherComponents from "./weathercomponents";
 export default function App() {
-  const [showCalculator, setShowCalculator] = useState(false);
 
-  const [showWeather,setShowWeather] = useState(false);
 
   const [showClicker,setShowClicker] = useState(false)
+  const [showCalculator,setShowCalculator] = useState(false)
+  const [showWeather,setShowWeather] = useState(false)
   
-  if (showCalculator) {
-    return <Calculator onBack={() => setShowCalculator(false)} />;
-  }
-
+  
 if(showClicker) {
   return <Clicker onBack={() => setShowClicker(false)}/>;
 }
-
- 
-
+if(showCalculator) {
+  return <Calculator/>;
+}
+if(showWeather){
+  return <WeatherComponents/>;
+}
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Моё мобильное приложение</Text>
@@ -42,6 +41,7 @@ if(showClicker) {
       <Button
       title="Шашки"
       color="#ff7f50"
+      
       />
     </View>
   );

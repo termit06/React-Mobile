@@ -1,206 +1,220 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import * as React from "react";
+import { View, TouchableOpacity } from "react-native";
+import { StyleSheet } from "react-native";
+import Field from "@/components/calculator/Field";
+import Padnum from "@/components/calculator/Padnum";
 
-// Интерфейс для пропсов Calculator
-interface CalculatorProps {
-  onBack?: () => void;
-}
+const Calculator = () => {
+  const [buffer, setBuffer] = React.useState("");
+  const [numInput, setInput] = React.useState("");
+  const [numSecond, setSecond] = React.useState("");
+  const [operator, setOperator] = React.useState("");
 
-// Интерфейс для пропсов компонента OperatorButton
-interface OperatorButtonProps {
-  op: string;
-  symbol: string;
-}
+  let k = [];
 
-const Calculator = ({ onBack }: CalculatorProps) => {
-  const [num1, setNum1] = useState('');
-  const [num2, setNum2] = useState('');
-  const [operator, setOperator] = useState('');
-  const [result, setResult] = useState('');
+  for (let i = 0; i <= 9; i++) {
+    k.push(i);
+  }
 
-  const calculate = () => {
-    const n1 = parseFloat(num1);
-    const n2 = parseFloat(num2);
-
-    if (isNaN(n1) || isNaN(n2)) {
-      setResult('Введите числа');
-      return;
-    }
-
-    let calculatedResult;
-    switch (operator) {
-      case '+':
-        calculatedResult = n1 + n2;
-        break;
-      case '-':
-        calculatedResult = n1 - n2;
-        break;
-      case '*':
-        calculatedResult = n1 * n2;
-        break;
-      case '/':
-        if (n2 === 0) {
-          setResult('Деление на ноль');
-          return;
-        }
-        calculatedResult = n1 / n2;
-        break;
-      default:
-        setResult('Выберите оператор');
-        return;
-    }
-
-    setResult(calculatedResult.toString());
+  const numBack = (value: any) => {
+    setInput(numInput + value.toString());
   };
 
-  // Компонент с типизированными пропсами
-  const OperatorButton = ({ op, symbol }: OperatorButtonProps) => (
-    <TouchableOpacity
-      style={[styles.operatorButton, operator === op && styles.selectedOperator]}
-      onPress={() => setOperator(op)}
-    >
-      <Text style={styles.operatorText}>{symbol}</Text>
-    </TouchableOpacity>
-  );
+  const handleOperator = (operator: string) => {
+    setOperator(operator);
+    switch (operator) {
+      case "+": {
+        setBuffer(numInput);
+        setInput("");
+        setSecond(numInput + " " + operator + " ");
+        break;
+      }
+      case "-": {
+        setBuffer(numInput);
+        setInput("");
+        setSecond(numInput + " " + operator + " ");
+        break;
+      }
+      case "*": {
+        setBuffer(numInput);
+        setInput("");
+        setSecond(numInput + " " + operator + " ");
+        break;
+      }
+      case "/": {
+        setBuffer(numInput);
+        setInput("");
+        setSecond(numInput + " " + operator + " ");
+        break;
+      }
+      case "!": {
+        if (numInput) {
+          const num = Number(numInput);
+          if (num >= 0 && num <= 170) {
+            const result = factorial(num);
+            setSecond(numInput + "! = " + result.toString());
+            setInput(result.toString());
+          } else {
+            setSecond("Ошибка: число должно быть 0-170");
+            setInput("");
+          }
+        }
+        break;
+      }
+    }
+  };
 
+  const handleEquation = (operator: any) => {
+    let result;
+    console.log(result);
+    switch (operator) {
+      case "+": {
+        result = Number(buffer) + Number(numInput);
+        setSecond(
+          numInput.toString() +
+            operator.toString() +
+            numInput.toString() +
+            "=" +
+            result.toString()
+        );
+        break;
+      }
+      case "-": {
+        result = Number(buffer) - Number(numInput);
+        setSecond(
+          numInput.toString() +
+            operator.toString() +
+            numSecond.toString() +
+            "=" +
+            result.toString()
+        );
+        break;
+      }
+      case "*": {
+        result = Number(buffer) * Number(numInput);
+        setSecond(
+          numInput.toString() +
+            operator.toString() +
+            numSecond.toString() +
+            "=" +
+            result.toString()
+        );
+        break;
+      }
+      case "/": {
+        result = Number(buffer) / Number(numInput);
+        setSecond(
+          numInput.toString() +
+            operator.toString() +
+            numSecond.toString() +
+            "=" +
+            result.toString()
+        );
+        break;
+      }
+    }
+  };
+
+  const handleClear = () => {
+    setSecond("");
+    setBuffer("");
+    setInput("");
+    setOperator("");
+  };
+
+  const factorial = (c: number) => {
+    let f = 1;
+    for (let i = 1; i <= c; i++) {
+      f = f * i;
+    }
+    return f;
+  };
   return (
-    <View style={styles.container}>
-      {/* Кнопка назад - отображается только если передан onBack */}
-      {onBack && (
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={onBack}
-        >
-          <Text style={styles.backButtonText}>← Назад</Text>
-        </TouchableOpacity>
-      )}
+    <View>
+      <text>Калькулятор</text>
+      <View style={styles.box1}>
+        <Field inputStr={numSecond} />
+        <Field inputStr={numInput} />
 
-      <Text style={styles.title}>Калькулятор</Text>
-      
-      <TextInput
-        style={styles.input}
-        placeholder="Первое число"
-        keyboardType="numeric"
-        value={num1}
-        onChangeText={setNum1}
-      />
-      
-      <View style={styles.operatorContainer}>
-        <OperatorButton op="+" symbol="+" />
-        <OperatorButton op="-" symbol="-" />
-        <OperatorButton op="*" symbol="×" />
-        <OperatorButton op="/" symbol="÷" />
+        {k.map((item, index) => (
+          <Padnum num={index} back={numBack} />
+        ))}
       </View>
-      
-      <TextInput
-        style={styles.input}
-        placeholder="Второе число"
-        keyboardType="numeric"
-        value={num2}
-        onChangeText={setNum2}
-      />
-      
-      <TouchableOpacity style={styles.calculateButton} onPress={calculate}>
-        <Text style={styles.calculateButtonText}>Посчитать</Text>
-      </TouchableOpacity>
-      
-      {result ? (
-        <View style={styles.resultContainer}>
-          <Text style={styles.resultLabel}>Результат:</Text>
-          <Text style={styles.resultText}>{result}</Text>
+      <View>
+        <View style={styles.box2}>
+          <TouchableOpacity
+            style={styles.button2}
+            onPress={(e) => handleOperator("+")}
+          >
+            +
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button2}
+            onPress={(e) => handleOperator("-")}
+          >
+            -
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button2}
+            onPress={(e) => handleOperator("*")}
+          >
+            *
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button2}
+            onPress={(e) => handleOperator("/")}
+          >
+            ÷
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button2}
+            onPress={(e) => handleEquation(operator)}
+          >
+            =
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button1} onPress={handleClear}>
+            Clear
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button2}
+            onPress={(e) => handleOperator("!")}
+          >
+            !
+          </TouchableOpacity>
         </View>
-      ) : null}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5',
-    justifyContent: 'center',
+  box1: {
+    display: "flex",
+    flexWrap: "wrap",
+    flexDirection: "row",
+    width: 80,
   },
-  backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    padding: 10,
-    zIndex: 1,
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: '#007AFF',
-    fontWeight: 'bold',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 30,
-    color: '#333',
-  },
-  input: {
-    height: 50,
+  button1: {
+    display: "flex",
+    fontSize: 40,
+    borderColor: "red",
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginBottom: 20,
-    backgroundColor: 'white',
-    fontSize: 16,
+    color: "red",
+    backgroundColor: "orange",
   },
-  operatorContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
+  button2: {
+    display: "flex",
+    fontSize: 40,
+    borderColor: "lime",
+    borderWidth: 1,
+    color: "lime",
+    backgroundColor: "blue",
   },
-  operatorButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#e0e0e0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  selectedOperator: {
-    borderColor: '#007AFF',
-    backgroundColor: '#d0e5ff',
-  },
-  operatorText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  calculateButton: {
-    height: 50,
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  calculateButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  resultContainer: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  resultLabel: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-  },
-  resultText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#007AFF',
+  box2: {
+    display: "flex",
+    flexWrap: "wrap",
+    flexDirection: "row",
+    width: 100,
   },
 });
 
