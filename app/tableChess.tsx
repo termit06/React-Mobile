@@ -8,8 +8,8 @@ const [result,setResult] = useState<number[]>([])
 const addElement = () =>{
     const num = parseInt(element)
     if(!isNaN(num)){
-        setInput([...input,num])
-        setElement("")
+       setInput([...input, num]);
+       setElement("");
     }
 }
 const rotateClockWise = () => {

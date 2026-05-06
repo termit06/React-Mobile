@@ -8,8 +8,7 @@ const weatherv2 = () => {
     const TypeOfFormat = 'json'
     const [data, setData] = useState<WeatherDto[]>()
     const [location, setLocation] = useState("Washington")
-
-    useEffect(() => {
+useEffect(() => {
         fetch(
             `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${encodeURIComponent(location)}?unitGroup=${WeatherData}&include=${optionConfig}&contenttype=${TypeOfFormat}&key=${API_KEY}`,
             {
@@ -22,15 +21,11 @@ const weatherv2 = () => {
                 setData(data.days)
             });
     },[location])
-    
-    return (
+return (
       <View>
         <View>
                 <Button title="London" onPress={() => setLocation("London")} />
                 <Button title="Washington" onPress={() => setLocation("Washington")} />
-                <Button title="Tokyo" onPress={() => setLocation("Tokyo")} />
-                <Button title="Kyoto" onPress={() => setLocation("Kyoto")} />
-                <Button title="Reykjavik" onPress={() => setLocation("Reykjavik")}/>
           <View>
             {data?.map((item: WeatherDto, index) => (
               <View key={index}>

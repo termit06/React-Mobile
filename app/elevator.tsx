@@ -26,4 +26,4 @@ const elevator = () => {
     }
     return seconds
 }
-export default elevator;
+export default elevator
